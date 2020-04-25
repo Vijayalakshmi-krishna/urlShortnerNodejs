@@ -3,7 +3,7 @@ const app = express();
 const bodyparser = require('body-parser');
 const cors = require('cors');
 const mongoClient = require('mongodb');
-const url = "mongodb://localhost:27017"
+const url = "mongodb+srv://admin:<password>@mongo-productcatalog-roxs3.mongodb.net/urlShortnerDB?retryWrites=true&w=majority"
 app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({ extended: true }));
 
@@ -37,8 +37,8 @@ app.post('/generateURL', function (req, res) {
         var db = client.db("urlShortnerDB");
         db.collection("urlshortnerlist").insertOne((urlshortData), function (err, result) {
             if (err) throw err;
-            console.log("URL ADDED IN DB");
-            console.log(urlshortData)
+            //console.log("URL ADDED IN DB");
+           // console.log(urlshortData)
             res.send(urlshortData);
             client.close();
            
@@ -58,7 +58,7 @@ app.get('/redirecturl/:id', function (req, res) {
         var db = client.db("urlShortnerDB")
         var resData = db.collection("urlshortnerlist").findOne({ shorturl: req.params.id });
         resData.then(function (data) {
-            console.log(data);           
+            //console.log(data);           
             res.redirect(data.longurl);
            // res.json(data);
             //client.close();
@@ -75,13 +75,14 @@ app.get('/redirecturl/:id', function (req, res) {
 
 app.get('/getallurl', function (req, res) {
     console.log(req.body);
+
     mongoClient.connect(url, { useUnifiedTopology: true }, function (err, client) {
         if (err) throw err;
         var db = client.db("urlShortnerDB");
         var urlData = db.collection("urlshortnerlist").find().toArray();
         urlData.then(function (data) {
-            console.log(data);
-            console.log("URL details displayed");
+           // console.log(data);
+           // console.log("URL details displayed");
             client.close();
             res.json(data);
         })
@@ -97,6 +98,6 @@ app.get('/getallurl', function (req, res) {
 
 
 
-app.listen(3000, function () {
-    console.log("port is running at 3000")
+app.listen(process.env.PORT, function () {
+    console.log("port is running at ",process.env.PORT);
 })
