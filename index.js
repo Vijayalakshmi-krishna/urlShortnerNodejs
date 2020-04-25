@@ -3,6 +3,7 @@ const app = express();
 const bodyparser = require('body-parser');
 const cors = require('cors');
 const mongoClient = require('mongodb');
+const validurl=require('valid-url');
 const url = "mongodb+srv://admin:passw0rd@mongo-productcatalog-roxs3.mongodb.net/urlShortnerDB?retryWrites=true&w=majority"
 app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({ extended: true }));
@@ -26,24 +27,35 @@ app.post('/generateURL', function (req, res) {
     var random_string = Math.random().toString(32).substring(2, 5) + Math.random().toString(32).substring(2, 5);
     console.log(random_string);
 
+
     let urlshortData = {
         'longurl': req.body.longurl,
         'description': req.body.description,
         'shorturl': random_string
     }
     
-    mongoClient.connect(url, { useUnifiedTopology: true }, function (err, client) {
-        if (err) throw err;
-        var db = client.db("urlShortnerDB");
-        db.collection("urlshortnerlist").insertOne((urlshortData), function (err, result) {
+    if(validurl.isUri(urlshortData.longurl))
+    {
+        mongoClient.connect(url, { useUnifiedTopology: true }, function (err, client) {
             if (err) throw err;
-            //console.log("URL ADDED IN DB");
-           // console.log(urlshortData)
-            res.send(urlshortData);
-            client.close();
-           
+            var db = client.db("urlShortnerDB");
+            db.collection("urlshortnerlist").insertOne((urlshortData), function (err, result) {
+                if (err) throw err;
+                //console.log("URL ADDED IN DB");
+               // console.log(urlshortData)
+                res.send(urlshortData);
+                client.close();
+               
+            });
         });
-    });
+    }
+    else
+    {
+        res.send({
+            message:"oops! url is invalid"
+        })
+    }
+    
 
 });
 
