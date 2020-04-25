@@ -4,6 +4,10 @@ const bodyparser = require('body-parser');
 const cors = require('cors');
 const mongoClient = require('mongodb');
 const validurl=require('valid-url');
+//const url="mongodb://localhost:27017"
+
+//const port=3000;
+const port=process.env.PORT;
 const url = "mongodb+srv://admin:passw0rd@mongo-productcatalog-roxs3.mongodb.net/urlShortnerDB?retryWrites=true&w=majority"
 app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({ extended: true }));
@@ -110,6 +114,6 @@ app.get('/getallurl', function (req, res) {
 
 
 
-app.listen(process.env.PORT, function () {
-    console.log("port is running at ",process.env.PORT);
+app.listen(port, function () {
+    console.log("port is running at ",port);
 })
