@@ -76,9 +76,10 @@ app.get('/redirecturl/:id', function (req, res) {
         if (err) throw err;
         var db = client.db("urlShortnerDB")
         var resData=db.collection("urlshortnerlist").findOneAndUpdate({ shorturl: req.params.id },{$inc:{clickcount:1}});            
-          
+          console.log(resData);
         resData.then(function(data){
            // client.close();
+           console.log(data);
             res.redirect(data.longurl);
         })
         .catch(function(err){
