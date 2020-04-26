@@ -80,7 +80,7 @@ app.get('/redirecturl/:id', function (req, res) {
         resData.then(function (data) {
             console.log(data);
             
-            db.collection("urlshortnerlist").updateOne({shorturl: req.params.id},{$inc:{clickcount:1}},function(err,data)
+            db.collection("urlshortnerlist").updateOne({shorturl: data.shorturl},{$inc:{clickcount:1}},function(err,result)
             {
                 res.redirect(data.longurl);
             })
