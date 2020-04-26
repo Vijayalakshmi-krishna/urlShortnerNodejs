@@ -75,9 +75,9 @@ app.get('/redirecturl/:id', function (req, res) {
     mongoClient.connect(url, { useUnifiedTopology: true }, function (err, client) {
         if (err) throw err;
         var db = client.db("urlShortnerDB")
-        var resData = db.collection("urlshortnerlist").findOneAndUpdate({ shorturl: req.params.id },{ $inc : { "clickcount" : 1 }});
+        var resData = db.collection("urlshortnerlist").findOneAndUpdate({ shorturl: req.params.id });
         resData.then(function (data) {
-            //console.log(data);           
+            console.log(data);           
             res.redirect(data.longurl);
            // res.json(data);
             //client.close();
