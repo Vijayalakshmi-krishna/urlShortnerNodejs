@@ -75,26 +75,34 @@ app.get('/redirecturl/:id', function (req, res) {
     mongoClient.connect(url, { useUnifiedTopology: true }, function (err, client) {
         if (err) throw err;
         var db = client.db("urlShortnerDB")
-        var resData=db.collection("urlshortnerlist").findOne({ shorturl: req.params.id });            
+        var resData=db.collection("urlshortnerlist").findOneAndUpdate({ shorturl: req.params.id },{$inc:{clickcount:1}});            
           
-        resData.then(function (data) {
-            console.log(data);
-            
-            db.collection("urlshortnerlist").updateOne({shorturl: data.shorturl},{$inc:{clickcount:1}},function(err,result)
-            {
-                res.redirect(data.longurl);
-            })
-           // res.redirect(data.longurl);
-           // res.json(data);
-            //client.close();
-
+        resData.then(function(data){
+           // client.close();
+            res.redirect(data.longurl);
         })
-            .catch(function (err) {
-                client.close();
-                res.json({
-                    message: "Error"
-                })
-            });
+        .catch(function(err){
+            client.close();
+            res.json({
+                message:"Error"
+            })
+        })
+        // resData.then(function (data) {
+        //     console.log(data);
+            
+        //     db.collection("urlshortnerlist").updateOne({shorturl: data.shorturl},{$inc:{clickcount:1}},function(err,result)
+        //     {
+        //         res.redirect(data.longurl);
+        //     })
+           
+
+        // })
+        //     .catch(function (err) {
+        //         client.close();
+        //         res.json({
+        //             message: "Error"
+        //         })
+        //     });
 
 });
 });
