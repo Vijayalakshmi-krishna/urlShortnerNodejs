@@ -70,15 +70,15 @@ app.post('/generateURL', function (req, res) {
 
 
 
-app.put('/redirecturl/:id', function (req, res) {
+app.post('/redirecturl/:id', function (req, res) {
     console.log(req.params.id);
     mongoClient.connect(url, { useUnifiedTopology: true }, function (err, client) {
         if (err) throw err;
         var db = client.db("urlShortnerDB")
-        db.collection("urlshortnerlist").findOneAndUpdate({ shorturl: req.params.id },{$inc : { clickcount : 1 }},function(err,result){
+        db.collection("urlshortnerlist").findOneAndUpdate({ shorturl: req.params.id },{$inc : { clickcount : 1 }},{returnNewDocument: true},function(err,result){
             if(err) throw err;
 
-            res.redirect(data.longurl);
+            res.redirect(result.longurl);
         });
     //     resData.then(function (data) {
     //         console.log(data);           
