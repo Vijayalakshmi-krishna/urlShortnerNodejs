@@ -80,11 +80,11 @@ app.get('/redirecturl/:id', function (req, res) {
         resData.then(function (data) {
             console.log(data);
             
-            // db.collection("urlshortnerlist").updateOne({shorturl: req.params.id},{$inc:{clickcount:1}},function(err,data)
-            // {
-            //     res.redirect(data.longurl);
-            // })
-            res.redirect(data.longurl);
+            db.collection("urlshortnerlist").updateOne({shorturl: req.params.id},{$inc:{clickcount:1}},function(err,data)
+            {
+                res.redirect(data.longurl);
+            })
+           // res.redirect(data.longurl);
            // res.json(data);
             //client.close();
 
