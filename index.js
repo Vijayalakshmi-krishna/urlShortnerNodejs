@@ -3,7 +3,7 @@ const app = express();
 const bodyparser = require('body-parser');
 const cors = require('cors');
 const mongoClient = require('mongodb');
-const validurl=require('valid-url');
+//const validurl=require('valid-url');
 //const url="mongodb://localhost:27017"
 
 //const port=3000;
@@ -35,14 +35,25 @@ app.post('/generateURL', function (req, res) {
     let urlshortData = {
         'longurl': req.body.longurl,
         'description': req.body.description,
-        'shorturl': random_string
+        'shorturl': random_string,
+        'clickcount':0
     }
     
-    if(validurl.isUri(urlshortData.longurl))
-    {
+    
         mongoClient.connect(url, { useUnifiedTopology: true }, function (err, client) {
             if (err) throw err;
             var db = client.db("urlShortnerDB");
+
+            // db.collection("urlshortnerlist").findOneAndUpdate(
+            //    ({ "longurl":req.body.longurl },
+            //    { $set: { "shorturl":random_string, "description" : req.body.description}, $inc : { "clickcount" : 1 } },
+            //    { upsert:true, returnNewDocument : true },function(err,result){
+            //        if(err) throw err;
+                
+            //        res.json(result);
+            //        client.close();
+            //    }) 
+            //  );
             db.collection("urlshortnerlist").insertOne((urlshortData), function (err, result) {
                 if (err) throw err;
                 //console.log("URL ADDED IN DB");
@@ -52,14 +63,6 @@ app.post('/generateURL', function (req, res) {
                
             });
         });
-    }
-    else
-    {
-        res.send({
-            message:"oops! url is invalid"
-        })
-    }
-    
 
 });
 
@@ -72,7 +75,7 @@ app.get('/redirecturl/:id', function (req, res) {
     mongoClient.connect(url, { useUnifiedTopology: true }, function (err, client) {
         if (err) throw err;
         var db = client.db("urlShortnerDB")
-        var resData = db.collection("urlshortnerlist").findOne({ shorturl: req.params.id });
+        var resData = db.collection("urlshortnerlist").findOneAndUpdate({ shorturl: req.params.id },{ $inc : { "clickcount" : 1 }});
         resData.then(function (data) {
             //console.log(data);           
             res.redirect(data.longurl);
