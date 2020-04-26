@@ -55,9 +55,7 @@ app.post('/generateURL', function (req, res) {
             //    }) 
             //  );
             db.collection("urlshortnerlist").insertOne((urlshortData), function (err, result) {
-                if (err) throw err;
-                //console.log("URL ADDED IN DB");
-               // console.log(urlshortData)
+                if (err) throw err;               
                 res.send(urlshortData);
                 client.close();
                
@@ -66,21 +64,16 @@ app.post('/generateURL', function (req, res) {
 
 });
 
-
-
-
-
 app.get('/redirecturl/:id', function (req, res) {
     console.log(req.params.id);
     mongoClient.connect(url, { useUnifiedTopology: true }, function (err, client) {
         if (err) throw err;
         var db = client.db("urlShortnerDB")
         var resData=db.collection("urlshortnerlist").findOneAndUpdate({ shorturl: req.params.id },{$inc:{clickcount:1}});            
-          console.log(resData);
+        
         resData.then(function(data){
-           // client.close();
-           console.log(data);
-            res.redirect(data.longurl);
+           // client.close();         
+            res.redirect(data.value.longurl);
         })
         .catch(function(err){
             client.close();
@@ -116,8 +109,7 @@ app.get('/getallurl', function (req, res) {
         var db = client.db("urlShortnerDB");
         var urlData = db.collection("urlshortnerlist").find().toArray();
         urlData.then(function (data) {
-           // console.log(data);
-           // console.log("URL details displayed");
+           
             client.close();
             res.json(data);
         })
