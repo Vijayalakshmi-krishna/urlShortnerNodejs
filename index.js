@@ -44,16 +44,7 @@ app.post('/generateURL', function (req, res) {
             if (err) throw err;
             var db = client.db("urlShortnerDB");
 
-            // db.collection("urlshortnerlist").findOneAndUpdate(
-            //    ({ "longurl":req.body.longurl },
-            //    { $set: { "shorturl":random_string, "description" : req.body.description}, $inc : { "clickcount" : 1 } },
-            //    { upsert:true, returnNewDocument : true },function(err,result){
-            //        if(err) throw err;
-                
-            //        res.json(result);
-            //        client.close();
-            //    }) 
-            //  );
+           
             db.collection("urlshortnerlist").insertOne((urlshortData), function (err, result) {
                 if (err) throw err;               
                 res.send(urlshortData);
@@ -81,22 +72,6 @@ app.get('/redirecturl/:id', function (req, res) {
                 message:"Error"
             })
         })
-        // resData.then(function (data) {
-        //     console.log(data);
-            
-        //     db.collection("urlshortnerlist").updateOne({shorturl: data.shorturl},{$inc:{clickcount:1}},function(err,result)
-        //     {
-        //         res.redirect(data.longurl);
-        //     })
-           
-
-        // })
-        //     .catch(function (err) {
-        //         client.close();
-        //         res.json({
-        //             message: "Error"
-        //         })
-        //     });
 
 });
 });
@@ -122,6 +97,22 @@ app.get('/getallurl', function (req, res) {
     });
 
 });
+
+app.delete("/deleteurl/:id",function(req,res){
+    console.log(req.params.id);
+    mongoClient.connect(url, { useUnifiedTopology: true }, function (err, client) {
+        if (err) throw err;
+        var db = client.db("urlShortnerDB");
+        db.collection("urlshortnerlist").deleteOne({ shorturl: req.params.id }, function (err, result) {
+            if (err) throw err;
+            
+            client.close();
+            res.json({
+                message: "deleted in DB"
+            })
+        });
+    });
+})
 
 
 
