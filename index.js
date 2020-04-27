@@ -55,29 +55,10 @@ app.post('/generateURL', function (req, res) {
 
 });
 
-app.get('/redirecturl/:id', function (req, res) {
-    console.log(req.params.id);
-    mongoClient.connect(url, { useUnifiedTopology: true }, function (err, client) {
-        if (err) throw err;
-        var db = client.db("urlShortnerDB")
-        var resData=db.collection("urlshortnerlist").findOneAndUpdate({ shorturl: req.params.id },{$inc:{clickcount:1}});            
-        
-        resData.then(function(data){
-           // client.close();         
-            res.redirect(data.value.longurl);
-        })
-        .catch(function(err){
-            client.close();
-            res.json({
-                message:"Error"
-            })
-        })
 
-});
-});
 
 app.get('/getallurl', function (req, res) {
-    console.log(req.body);
+    //console.log(req.body);
 
     mongoClient.connect(url, { useUnifiedTopology: true }, function (err, client) {
         if (err) throw err;
@@ -96,6 +77,27 @@ app.get('/getallurl', function (req, res) {
             })
     });
 
+});
+
+app.get('/:id', function (req, res) {
+    console.log(req.params.id);
+    mongoClient.connect(url, { useUnifiedTopology: true }, function (err, client) {
+        if (err) throw err;
+        var db = client.db("urlShortnerDB")
+        var resData=db.collection("urlshortnerlist").findOneAndUpdate({ shorturl: req.params.id },{$inc:{clickcount:1}});            
+        
+        resData.then(function(data){
+           // client.close();         
+            res.redirect(data.value.longurl);
+        })
+        .catch(function(err){
+            client.close();
+            res.json({
+                message:"Error"
+            })
+        })
+
+});
 });
 
 app.delete("/deleteurl/:id",function(req,res){
