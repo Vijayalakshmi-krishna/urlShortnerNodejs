@@ -55,7 +55,7 @@ app.post('/generateURL', function (req, res) {
 
 });
 
-app.get('/:id', function (req, res) {
+app.get('redirecturl/:id', function (req, res) {
     console.log(req.params.id);
     mongoClient.connect(url, { useUnifiedTopology: true }, function (err, client) {
         if (err) throw err;
