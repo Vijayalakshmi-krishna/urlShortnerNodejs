@@ -29,11 +29,11 @@ app.all('*', function (req, res, next) {
 app.post('/generateURL', function (req, res) {
 
     //console.log(req.body);
-    if (req.body.shorturl == "") {
+    
         var random_string = Math.random().toString(32).substring(2, 5) + Math.random().toString(32).substring(2, 5);
       //  console.log(random_string);
-        req.body.shorturl = random_string
-    }
+       req.body.shorturl = random_string
+    
     let urlshortData = {
         'longurl': req.body.longurl,
         'description': req.body.description,
